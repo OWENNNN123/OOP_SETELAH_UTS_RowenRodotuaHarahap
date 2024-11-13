@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     private PlayerMovement playerMovement;
     private Animator animator;
 
-    // Referensi untuk senjata yang sedang aktif
+    // Reference to the currently active weapon
     private Weapon activeWeapon;
 
     private void Awake()
@@ -40,21 +40,39 @@ public class Player : MonoBehaviour
         animator.SetBool("IsMoving", playerMovement.IsMoving());
     }
 
-    // Method untuk mengganti senjata
+    private void Update()
+    {
+        // Check input to shoot
+        if (Input.GetButtonDown("Fire1") && HasWeapon())
+        {
+            activeWeapon.Shoot();
+        }
+    }
+
+    // Method to equip a new weapon
     public void EquipWeapon(Weapon newWeapon)
     {
-        // Jika ada senjata aktif, nonaktifkan
+        // Deactivate any currently active weapon
         if (activeWeapon != null)
         {
             activeWeapon.gameObject.SetActive(false);
         }
 
-        // Aktifkan senjata baru dan set sebagai senjata aktif
+        // Set the new weapon as the active weapon
         activeWeapon = newWeapon;
+
+        // Parent the weapon to the player so it follows the player's movement
+        activeWeapon.transform.SetParent(transform);
+
+        // Reset the weapon's local position and rotation to align it with the player
+        activeWeapon.transform.localPosition = Vector3.zero; // Adjust this if you need a specific offset
+        activeWeapon.transform.localRotation = Quaternion.identity;
+
+        // Activate the weapon
         activeWeapon.gameObject.SetActive(true);
     }
 
-    // Method untuk mengecek apakah Player memiliki senjata
+    // Method to check if the player has a weapon
     public bool HasWeapon()
     {
         return activeWeapon != null;

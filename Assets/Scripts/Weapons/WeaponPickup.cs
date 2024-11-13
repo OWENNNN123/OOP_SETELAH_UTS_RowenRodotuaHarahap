@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponPickup : MonoBehaviour
 {
-    [SerializeField] private Weapon weaponHolder; 
+    [SerializeField] private Weapon weaponHolder; // Reference to the weapon to be picked up
     private Weapon weapon;
 
     private void Awake()
@@ -16,7 +16,7 @@ public class WeaponPickup : MonoBehaviour
     {
         if (weapon != null)
         {
-            TurnVisual(false); 
+            TurnVisual(false); // Hide the weapon initially
         }
     }
 
@@ -24,22 +24,26 @@ public class WeaponPickup : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            
+            // Set the weapon as a child of the player
             weapon.transform.SetParent(other.transform);
 
-        
+            // Equip the weapon on the player
             Player.Instance.EquipWeapon(weapon);
 
-            
-            weapon.transform.localPosition = Vector3.zero;
+            // Position and rotate the weapon relative to the player
+            weapon.transform.localPosition = new Vector3(0, 0.5f, 0); // Adjust to position weapon above player
+            weapon.transform.localRotation = Quaternion.Euler(0, 0, 0); // Ensure the rotation is zeroed
 
-            
+            // Show the weapon's visual
             TurnVisual(true);
+
+            // Optionally, deactivate the WeaponPickup object to prevent re-picking
+            gameObject.SetActive(false);
         }
     }
 
     private void TurnVisual(bool on)
     {
-        weapon.gameObject.SetActive(on); // Mengaktifkan atau menonaktifkan tampilan senjata
+        weapon.gameObject.SetActive(on); // Toggle weapon visibility
     }
 }
