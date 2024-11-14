@@ -4,9 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer), typeof(HitboxComponent))]
 public class InvincibilityComponent : MonoBehaviour
 {
-    [SerializeField] private int blinkingCount = 7;
-    [SerializeField] private float blinkInterval = 0.1f;
-    [SerializeField] private Material blinkMaterial;
+    [SerializeField] private int blinkingCount = 7;            // Jumlah blinking
+    [SerializeField] private float blinkInterval = 0.1f;       // Interval blinking
+    [SerializeField] private Material blinkMaterial;           // Material saat blinking (warna merah untuk player, putih untuk enemy)
+    
     private SpriteRenderer spriteRenderer;
     private Material originalMaterial;
     public bool isInvincible = false;
@@ -14,29 +15,27 @@ public class InvincibilityComponent : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        originalMaterial = spriteRenderer.material;
+        originalMaterial = spriteRenderer.material;   // Menyimpan material asli
     }
 
-    public void ActivateInvincibility()
+    public void TriggerInvincibility()
     {
         if (!isInvincible)
         {
-            StartCoroutine(BlinkingCoroutine());
+            StartCoroutine(InvincibilityCoroutine());
         }
     }
 
-    private IEnumerator BlinkingCoroutine()
+    private IEnumerator InvincibilityCoroutine()
     {
         isInvincible = true;
-        
         for (int i = 0; i < blinkingCount; i++)
         {
-            spriteRenderer.material = blinkMaterial;
+            spriteRenderer.material = blinkMaterial;    // Mengganti material ke material blink
             yield return new WaitForSeconds(blinkInterval);
-            spriteRenderer.material = originalMaterial;
+            spriteRenderer.material = originalMaterial; // Kembali ke material asli
             yield return new WaitForSeconds(blinkInterval);
         }
-
         isInvincible = false;
     }
 }

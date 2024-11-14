@@ -53,12 +53,12 @@ public class Weapon : MonoBehaviour
     }
 
     private void OnTakeFromPool(Bullet bullet)
-    {
-        // Aktifkan bullet dan set posisi serta rotasinya
-        bullet.transform.position = bulletSpawnPoint.position;
-        bullet.transform.rotation = bulletSpawnPoint.rotation;
-        bullet.gameObject.SetActive(true);
-    }
+{
+    bullet.transform.position = bulletSpawnPoint.position;
+    bullet.transform.rotation = bulletSpawnPoint.rotation;
+    bullet.gameObject.SetActive(true);
+}
+
 
     private void OnReturnedToPool(Bullet bullet)
     {

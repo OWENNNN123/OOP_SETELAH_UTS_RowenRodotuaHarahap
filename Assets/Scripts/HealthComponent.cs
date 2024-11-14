@@ -20,7 +20,7 @@ public class HealthComponent : MonoBehaviour
         health -= amount;
         if (health <= 0)
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // Hancurkan game object ketika nyawa habis
         }
     }
 }

@@ -4,22 +4,32 @@ public class EnemyForward : Enemy
 {
     private void Start()
     {
-        // Spawn di posisi acak di atas layar
         transform.position = new Vector2(Random.Range(-8f, 8f), 10f);
-
-        // Atur rotasi agar enemy tidak menghadap ke player, hanya mengarah ke bawah layar
-        transform.rotation = Quaternion.Euler(0, 0, 180); // Menghadap ke bawah layar
+        transform.rotation = Quaternion.Euler(0, 0, 180);
     }
 
     private void Update()
     {
-        // Gerakkan enemy ke bawah
         transform.Translate(Vector2.up * speed * Time.deltaTime, Space.Self);
 
-        // Hapus jika keluar layar di bagian bawah
         if (transform.position.y < -10f)
         {
             Destroy(gameObject);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            HealthComponent playerHealth = other.GetComponent<HealthComponent>();
+            HealthComponent enemyHealth = GetComponent<HealthComponent>();
+
+            if (playerHealth != null && enemyHealth != null)
+            {
+                playerHealth.Subtract(enemyHealth.GetHealth()); // Damage sebesar health enemy
+            }
+            Destroy(gameObject); // Hancurkan enemy setelah menabrak player
         }
     }
 }

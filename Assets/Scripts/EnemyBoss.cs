@@ -3,18 +3,17 @@ using UnityEngine.Pool;
 
 public class EnemyBoss : MonoBehaviour
 {
-    public int level = 1;
-    public float speed = 2f;
-    public float shootIntervalInSeconds = 2f;
+    [Header("Movement Stats")]
+    [SerializeField] private float horizontalSpeed = 2f; // Kecepatan gerak horizontal
+    private bool movingRight = true; // Untuk mengatur arah gerakan
 
-    [Header("Bullets")]
-    public Bullet bulletPrefab;
-    public Transform bulletSpawnPoint;
+    [Header("Weapon Stats")]
+    [SerializeField] private float shootIntervalInSeconds = 2f;
+    [SerializeField] private Bullet bulletPrefab; // Prefab bullet yang akan digunakan
+    [SerializeField] private Transform bulletSpawnPoint; // Posisi spawn peluru
 
     private IObjectPool<Bullet> bulletPool;
     private float shootTimer;
-    private float direction = 1; // 1 untuk kanan, -1 untuk kiri
-    private float screenLimit = 8f; // Batas layar horizontal (atur sesuai dengan lebar layar)
 
     private void Awake()
     {
@@ -22,26 +21,19 @@ public class EnemyBoss : MonoBehaviour
             CreateBullet,
             OnTakeFromPool,
             OnReturnedToPool,
-            OnDestroyPoolObject
+            OnDestroyPoolObject,
+            false, 
+            10, 
+            50
         );
     }
 
     private void Update()
     {
-        // Gerakan horizontal bolak-balik
-        transform.Translate(Vector2.right * speed * direction * Time.deltaTime);
+        // Panggil fungsi untuk pergerakan horizontal
+        MoveHorizontally();
 
-        // Jika EnemyBoss mencapai batas layar, balikkan arah
-        if (transform.position.x >= screenLimit)
-        {
-            direction = -1;
-        }
-        else if (transform.position.x <= -screenLimit)
-        {
-            direction = 1;
-        }
-
-        // Timer untuk menembak peluru
+        // Timer untuk menembakkan peluru
         shootTimer += Time.deltaTime;
         if (shootTimer >= shootIntervalInSeconds)
         {
@@ -50,18 +42,42 @@ public class EnemyBoss : MonoBehaviour
         }
     }
 
+    private void MoveHorizontally()
+    {
+        // Jika bergerak ke kanan, tambahkan posisi, jika ke kiri kurangi posisi
+        if (movingRight)
+        {
+            transform.Translate(Vector2.right * horizontalSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.Translate(Vector2.left * horizontalSpeed * Time.deltaTime);
+        }
+
+        // Periksa batas layar untuk membalik arah
+        if (transform.position.x > 7f) // Misalkan batas kanan
+        {
+            movingRight = false;
+        }
+        else if (transform.position.x < -7f) // Misalkan batas kiri
+        {
+            movingRight = true;
+        }
+    }
+
     private Bullet CreateBullet()
     {
-        Bullet bullet = Instantiate(bulletPrefab);
-        bullet.gameObject.SetActive(false);
-        bullet.SetPool(bulletPool);
-        return bullet;
+        Bullet newBullet = Instantiate(bulletPrefab);
+        newBullet.gameObject.SetActive(false);
+        newBullet.SetPool(bulletPool);
+        return newBullet;
     }
 
     private void OnTakeFromPool(Bullet bullet)
     {
         bullet.transform.position = bulletSpawnPoint.position;
         bullet.transform.rotation = bulletSpawnPoint.rotation;
+        bullet.isEnemyBullet = true; // Menandai peluru sebagai peluru dari EnemyBoss
         bullet.gameObject.SetActive(true);
     }
 
@@ -81,7 +97,7 @@ public class EnemyBoss : MonoBehaviour
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.velocity = Vector2.down * bullet.bulletSpeed;
+            rb.velocity = bulletSpawnPoint.up * bullet.bulletSpeed;
         }
     }
 }

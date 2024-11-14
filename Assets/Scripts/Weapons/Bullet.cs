@@ -3,56 +3,49 @@ using UnityEngine.Pool;
 
 public class Bullet : MonoBehaviour
 {
-    [Header("Bullet Stats")]
     public float bulletSpeed = 20f;
     public int damage = 10;
-
     private Rigidbody2D rb;
     private IObjectPool<Bullet> bulletPool;
+    public bool isEnemyBullet = false; // Menandai apakah bullet ini dari enemy atau player
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.isKinematic = true; // Agar bullet tidak terpengaruh oleh fisika
-        }
+        rb.isKinematic = true; // Memastikan bullet tidak terpengaruh fisika
     }
 
     private void OnEnable()
     {
-        if (rb != null)
-        {
-            rb.velocity = transform.up * bulletSpeed; // Set kecepatan bullet ke arah atas
-        }
+        rb.velocity = transform.up * bulletSpeed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Damage ke HitboxComponent jika ada
         HitboxComponent hitbox = other.GetComponent<HitboxComponent>();
+        InvincibilityComponent invincibility = other.GetComponent<InvincibilityComponent>();
+
+        // Pastikan bullet hanya mengenai target yang sesuai
         if (hitbox != null)
         {
-            hitbox.Damage(damage);
-        }
+            if ((isEnemyBullet && other.CompareTag("Player")) || (!isEnemyBullet && other.CompareTag("Enemy")))
+            {
+                if (invincibility != null && !invincibility.isInvincible)
+                {
+                    hitbox.Damage(damage);
+                    invincibility.TriggerInvincibility(); // Memicu efek flashing
+                }
 
-        // Kembalikan bullet ke pool setelah mengenai sesuatu
-        if (bulletPool != null)
-        {
-            bulletPool.Release(this);
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
-    }
-
-    private void OnBecameInvisible()
-    {
-        // Kembalikan bullet ke pool jika keluar dari layar
-        if (bulletPool != null)
-        {
-            bulletPool.Release(this);
+                // Kembalikan bullet ke pool setelah mengenai target
+                if (bulletPool != null)
+                {
+                    bulletPool.Release(this);
+                }
+                else
+                {
+                    gameObject.SetActive(false);
+                }
+            }
         }
     }
 
