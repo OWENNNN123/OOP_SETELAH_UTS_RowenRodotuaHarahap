@@ -41,9 +41,9 @@ public class EnemyHorizontal : Enemy
 
             if (playerHealth != null && enemyHealth != null)
             {
-                playerHealth.Subtract(enemyHealth.GetHealth()); // Damage sebesar health enemy
+                playerHealth.Subtract(enemyHealth.GetHealth()); 
             }
-            Destroy(gameObject); // Hancurkan enemy setelah menabrak player
+            Destroy(gameObject); 
         }
     }
 }

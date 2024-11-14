@@ -8,6 +8,7 @@ public class AttackComponent : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        
         if (other.CompareTag(gameObject.tag))
             return;
 
@@ -15,12 +16,11 @@ public class AttackComponent : MonoBehaviour
         if (hitbox != null)
         {
             InvincibilityComponent invincibility = other.GetComponent<InvincibilityComponent>();
-            if (invincibility != null)
+            if (invincibility != null && !invincibility.isInvincible)
             {
-                invincibility.TriggerInvincibility(); // Menggunakan TriggerInvincibility alih-alih ActivateInvincibility
+                hitbox.Damage(damage);
+                invincibility.TriggerInvincibility(); 
             }
-            
-            hitbox.Damage(damage);
         }
     }
 }

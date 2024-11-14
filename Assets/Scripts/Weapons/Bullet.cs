@@ -7,12 +7,12 @@ public class Bullet : MonoBehaviour
     public int damage = 10;
     private Rigidbody2D rb;
     private IObjectPool<Bullet> bulletPool;
-    public bool isEnemyBullet = false; // Menandai apakah bullet ini dari enemy atau player
+    public bool isEnemyBullet = false; 
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.isKinematic = true; // Memastikan bullet tidak terpengaruh fisika
+        rb.isKinematic = true; 
     }
 
     private void OnEnable()
@@ -22,29 +22,28 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        
         HitboxComponent hitbox = other.GetComponent<HitboxComponent>();
         InvincibilityComponent invincibility = other.GetComponent<InvincibilityComponent>();
 
-        // Pastikan bullet hanya mengenai target yang sesuai
-        if (hitbox != null)
+        
+        if (hitbox != null && ((isEnemyBullet && other.CompareTag("Player")) || (!isEnemyBullet && other.CompareTag("Enemy"))))
         {
-            if ((isEnemyBullet && other.CompareTag("Player")) || (!isEnemyBullet && other.CompareTag("Enemy")))
+            
+            if (invincibility != null && !invincibility.isInvincible)
             {
-                if (invincibility != null && !invincibility.isInvincible)
-                {
-                    hitbox.Damage(damage);
-                    invincibility.TriggerInvincibility(); // Memicu efek flashing
-                }
+                hitbox.Damage(damage);
+                invincibility.TriggerInvincibility(); 
+            }
 
-                // Kembalikan bullet ke pool setelah mengenai target
-                if (bulletPool != null)
-                {
-                    bulletPool.Release(this);
-                }
-                else
-                {
-                    gameObject.SetActive(false);
-                }
+            
+            if (bulletPool != null)
+            {
+                bulletPool.Release(this);
+            }
+            else
+            {
+                gameObject.SetActive(false);
             }
         }
     }

@@ -4,13 +4,13 @@ using UnityEngine.Pool;
 public class EnemyBoss : MonoBehaviour
 {
     [Header("Movement Stats")]
-    [SerializeField] private float horizontalSpeed = 2f; // Kecepatan gerak horizontal
-    private bool movingRight = true; // Untuk mengatur arah gerakan
+    [SerializeField] private float horizontalSpeed = 2f;
+    private bool movingRight = true; 
 
     [Header("Weapon Stats")]
     [SerializeField] private float shootIntervalInSeconds = 2f;
-    [SerializeField] private Bullet bulletPrefab; // Prefab bullet yang akan digunakan
-    [SerializeField] private Transform bulletSpawnPoint; // Posisi spawn peluru
+    [SerializeField] private Bullet bulletPrefab; 
+    [SerializeField] private Transform bulletSpawnPoint; 
 
     private IObjectPool<Bullet> bulletPool;
     private float shootTimer;
@@ -30,10 +30,10 @@ public class EnemyBoss : MonoBehaviour
 
     private void Update()
     {
-        // Panggil fungsi untuk pergerakan horizontal
+        
         MoveHorizontally();
 
-        // Timer untuk menembakkan peluru
+        
         shootTimer += Time.deltaTime;
         if (shootTimer >= shootIntervalInSeconds)
         {
@@ -44,7 +44,7 @@ public class EnemyBoss : MonoBehaviour
 
     private void MoveHorizontally()
     {
-        // Jika bergerak ke kanan, tambahkan posisi, jika ke kiri kurangi posisi
+        
         if (movingRight)
         {
             transform.Translate(Vector2.right * horizontalSpeed * Time.deltaTime);
@@ -54,12 +54,12 @@ public class EnemyBoss : MonoBehaviour
             transform.Translate(Vector2.left * horizontalSpeed * Time.deltaTime);
         }
 
-        // Periksa batas layar untuk membalik arah
-        if (transform.position.x > 7f) // Misalkan batas kanan
+        
+        if (transform.position.x > 7f)  
         {
             movingRight = false;
         }
-        else if (transform.position.x < -7f) // Misalkan batas kiri
+        else if (transform.position.x < -7f) 
         {
             movingRight = true;
         }
@@ -77,7 +77,7 @@ public class EnemyBoss : MonoBehaviour
     {
         bullet.transform.position = bulletSpawnPoint.position;
         bullet.transform.rotation = bulletSpawnPoint.rotation;
-        bullet.isEnemyBullet = true; // Menandai peluru sebagai peluru dari EnemyBoss
+        bullet.isEnemyBullet = true; 
         bullet.gameObject.SetActive(true);
     }
 

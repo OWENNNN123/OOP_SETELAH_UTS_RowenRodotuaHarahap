@@ -13,12 +13,20 @@ public class HitboxComponent : MonoBehaviour
 
     public void Damage(int damageAmount)
     {
+        
         if (invincibility != null && invincibility.isInvincible)
             return;
 
+        
         if (health != null)
         {
             health.Subtract(damageAmount);
+
+            
+            if (invincibility != null)
+            {
+                invincibility.TriggerInvincibility();
+            }
         }
     }
 }
