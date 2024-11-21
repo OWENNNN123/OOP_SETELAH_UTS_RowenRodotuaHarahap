@@ -42,5 +42,5 @@ public class EnemyTargeting : Enemy
             }
             Destroy(gameObject); 
         }
-    } // <-- This closing brace was missing
+    } 
 }
