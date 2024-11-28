@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public TextMeshProUGUI healthText;
+public HealthComponent playerHealth;
 
 public class Player : MonoBehaviour
 {
@@ -77,4 +79,11 @@ public class Player : MonoBehaviour
     {
         return activeWeapon != null;
     }
+}
+
+
+
+private void Update()
+{
+    healthText.text = $"Health: {playerHealth.GetHealth()}";
 }
